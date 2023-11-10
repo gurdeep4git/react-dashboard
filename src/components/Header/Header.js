@@ -2,9 +2,11 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import classes from './Header.module.css';
 import useToken from '../../hooks/useToken';
-import Login from '../Login/Login';
+import { useNavigate } from "react-router-dom";
+import { URL } from '../../constants/url';
 
 const Header = () => {
+    const navigate = useNavigate();
     const { token, clearToken } = useToken();
     const [user, setUser] = useState();
 
@@ -28,7 +30,7 @@ const Header = () => {
 
     const onLogout = () => {
         clearToken()
-        return <Login setToken={null} />
+        navigate(URL.LOGIN)
     }
 
     return (

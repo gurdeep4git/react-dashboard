@@ -1,35 +1,23 @@
 import { Routes, Route } from "react-router-dom";
-import Products from "./components/Products/Products";
 import Login from "./components/Login/Login";
+import Dashboard from "./components/Dashboard/Dashboard";
 import useToken from "./hooks/useToken";
-import Header from "./components/Header/Header";
-
+import Products from './components/Products/Products';
+import Profile from "./components/Profile/Profile";
+import { URL } from "./constants/url";
 function App() {
-  const { token, setToken } = useToken();
-
-  if (!token) {
-    return <Login setToken={setToken} />
-  }
+  const { setToken } = useToken();
 
   return (
     <>
-      <div className="container-fluid g-0">
-        <div className="row g-0">
-          <div className="col-md-3">Menu</div>
-          <div className="col-md-9">
-            <header>
-              <Header token={token} />
-            </header>
-            <main>
-              <Routes>
-                <Route path="/" element={<Products />} />
-              </Routes>
-            </main>
-          </div>
-        </div>
-      </div>
+      <Routes>
+        <Route path={URL.LOGIN} element={<Login setToken={setToken} />} />
+        <Route path={URL.DASHBOARD} element={<Dashboard />}>
+          <Route path="products" element={<Products />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+      </Routes>
     </>
-
   );
 }
 
