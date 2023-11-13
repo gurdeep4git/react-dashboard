@@ -47,11 +47,11 @@ const Login = (props) => {
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3">
                         <label htmlFor="emailControl" className="form-label">Email address</label>
-                        <input defaultValue={'john@mail.com'} ref={emailRef} type="email" className="form-control" id="emailControl" />
+                        <input defaultValue={'maria@mail.com'} ref={emailRef} type="email" className="form-control" id="emailControl" />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="passwordControl" className="form-label">Password</label>
-                        <input defaultValue={'changeme'} ref={passwordRef} type="password" className="form-control" id="passwordControl" />
+                        <input defaultValue={'12345'} ref={passwordRef} type="password" className="form-control" id="passwordControl" />
                     </div>
                     <div className="mb-3 d-flex justify-content-end">
                         {

@@ -12,6 +12,13 @@ const Dashboard = () => {
         return <Login setToken={setToken} />
     }
 
+    const mainStyle = {
+        'height': 'calc(100vh - 88px)',
+        'overflowY': 'auto',
+        'padding': '22px',
+        'background': '#f8f7f7'
+    }
+
     return (
         <div className="container-fluid g-0">
             <div className="row g-0">
@@ -22,7 +29,7 @@ const Dashboard = () => {
                     <header>
                         <Header token={token} />
                     </header>
-                    <main>
+                    <main style={mainStyle}>
                         <Outlet />
                     </main>
                 </div>

@@ -16,6 +16,7 @@ const Header = () => {
                 const response = await axios.get(`https://api.escuelajs.co/api/v1/auth/profile`,
                     { headers: { "Authorization": `Bearer ${token}` } })
                 setUser(response?.data);
+                console.log('user', response.data)
             }
             catch (e) {
                 console.error(e);
@@ -34,7 +35,7 @@ const Header = () => {
     }
 
     return (
-        <div className='d-flex p-3 border-bottom justify-content-end align-items-center'>
+        <div className='d-flex p-3 border-bottom justify-content-end align-items-center bg-white'>
             <div>
                 <div className='d-flex align-items-center'>
                     <div className={classes['image-container']}>

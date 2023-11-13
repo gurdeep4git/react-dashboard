@@ -11,8 +11,10 @@ function App() {
   return (
     <>
       <Routes>
+        <Route exact path='/' element={<Login setToken={setToken} />} />
         <Route path={URL.LOGIN} element={<Login setToken={setToken} />} />
         <Route path={URL.DASHBOARD} element={<Dashboard />}>
+          <Route path="." element={<Products />} />
           <Route path="products" element={<Products />} />
           <Route path="profile" element={<Profile />} />
         </Route>
