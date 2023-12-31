@@ -4,6 +4,7 @@ import ProductItem from './ProductItem';
 import PageTitle from '../PageTitle/PageTitle';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner';
+import Filter from './Filter/Filter';
 
 const Products = () => {
 
@@ -22,6 +23,15 @@ const Products = () => {
     const [categories, setCategories] = useState(null);
     const [searchTitle, setSearchTitle] = useState('');
     const [searchTitleTouched, setSearchTitleTouched] = useState(false);
+    const [showFilter, setShowFilter] = useState(false);
+    const initialFilter = {
+        title: '',
+        category: '',
+        priceMin: '',
+        priceMax: ''
+    }
+    const [filter, setFilter] = useState(initialFilter);
+    const [isFilterApplied, setIsFilterApplied] = useState(false)
 
     useEffect(() => {
         if (categoriesData) {
@@ -84,6 +94,55 @@ const Products = () => {
         return axios.get(`https://api.escuelajs.co/api/v1/products/?title=${searchTitle}`)
     }
 
+    const onShowFilter = () => {
+        setShowFilter(true)
+    }
+
+    const onHideFilter = () => {
+        setShowFilter(false)
+    }
+
+    const onSubmitFilter = async (filter) => {
+        try {
+            setLoading(true);
+            setFilter(filter);
+            const response = await getProductsByFilters(filter)
+            onHideFilter();
+            setIsFilterApplied(true)
+            setProducts(response?.data);
+        } catch (error) {
+            console.error(error);
+        }
+        finally {
+            setLoading(false);
+
+        }
+    }
+
+    const getProductsByFilters = (filter) => {
+        const url = `https://api.escuelajs.co/api/v1/products/?title=${filter.title}&price_min=${filter.priceMin}&price_max=${filter.priceMax}&categoryId=${filter.category}`;
+        return axios.get(url);
+    }
+
+    const onRemoveFilters = async () => {
+        console.log(initialFilter)
+        try {
+            setLoading(true);
+            setFilter(initialFilter);
+            setIsFilterApplied(false);
+            const response = await getAllProducts();
+            setProducts(response?.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const getAllProducts = () => {
+        return axios.get(`https://api.escuelajs.co/api/v1/products`);
+    }
+
     return (
         <>
             <PageTitle title='Products' />
@@ -105,7 +164,18 @@ const Products = () => {
                             </select>
                         </div>
                     </div>
-
+                    <div className='col-auto'>
+                        <button onClick={onShowFilter} type='button' className='position-relative btn btn-primary'>Filters
+                            {isFilterApplied &&
+                                <span className="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                                    <span className="visually-hidden">New alerts</span>
+                                </span>
+                            }
+                        </button>
+                        {isFilterApplied &&
+                            <a href="#" onClick={onRemoveFilters} className="ms-3 link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Remove Filters</a>
+                        }
+                    </div>
                 </div>
 
             </section>
@@ -126,6 +196,8 @@ const Products = () => {
                         )
                 }
             </section>
+
+            <Filter title="Filters" filter={filter} categories={categories} show={showFilter} onHide={onHideFilter} onSubmit={onSubmitFilter} />
         </>
     )
 }

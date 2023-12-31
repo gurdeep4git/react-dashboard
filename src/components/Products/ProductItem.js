@@ -1,6 +1,6 @@
 import React from 'react'
 import classes from './ProductItem.module.css';
-
+import { faker } from '@faker-js/faker';
 const ProductItem = (props) => {
 
     const { product } = props;
@@ -11,7 +11,7 @@ const ProductItem = (props) => {
                 <div className='col-md-2'>
                     <div className={classes['image-container']}>
                         {
-                            (!product?.images?.[0].includes('http') || product?.images?.[0].includes('any')) ?
+                            (!product?.images?.[0].includes('http') || product?.images?.[0]?.includes('any')) ?
                                 (
                                     null
                                 ) :
