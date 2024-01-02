@@ -1,4 +1,4 @@
-![image](src/assets/products-page.png)
+![image](src/assets/products-page-1.png)
 
 # Getting Started with Create React App
 
