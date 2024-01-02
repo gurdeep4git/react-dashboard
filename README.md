@@ -1,4 +1,4 @@
-![image](src/assets/images/make-my-resume.png)
+![image](src/assets/products-page.png)
 
 # Getting Started with Create React App
 
