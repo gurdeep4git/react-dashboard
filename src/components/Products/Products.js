@@ -5,6 +5,9 @@ import PageTitle from '../PageTitle/PageTitle';
 import axios from 'axios';
 import Spinner from '../Spinner/Spinner';
 import Filter from './Filter/Filter';
+import AddEdit from './AddEdit/AddEdit';
+import { ACTIONS } from '../../constants/url';
+import DeleteModal from './DeleteModal/DeleteModal';
 
 const Products = () => {
 
@@ -24,12 +27,18 @@ const Products = () => {
     const [searchTitle, setSearchTitle] = useState('');
     const [searchTitleTouched, setSearchTitleTouched] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
+    const [showAddEdit, setShowAddEdit] = useState(false);
+    const [action, setAction] = useState(ACTIONS.NONE);
+    const [selectedProductId, setSelectedProductId] = useState();
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+
     const initialFilter = {
         title: '',
         category: '',
         priceMin: '',
         priceMax: ''
     }
+
     const [filter, setFilter] = useState(initialFilter);
     const [isFilterApplied, setIsFilterApplied] = useState(false)
 
@@ -143,6 +152,67 @@ const Products = () => {
         return axios.get(`https://api.escuelajs.co/api/v1/products`);
     }
 
+    const onEditHandler = (id) => {
+        setSelectedProductId(id);
+        setAction(ACTIONS.EDIT);
+        setShowAddEdit(true);
+    }
+
+    const onHideAddEdit = () => {
+        setShowAddEdit(false);
+        setAction(ACTIONS.NONE);
+    }
+
+    const updateProduct = (product) => {
+        const url = `https://api.escuelajs.co/api/v1/products/${product.id}`;
+        return axios.put(url, product)
+    }
+
+    const onAddEditSubmitHandler = async (product) => {
+        try {
+            setLoading(true);
+            const response = await updateProduct(product);
+            const updatedProduct = response?.data;
+
+            onHideAddEdit()
+
+            const index = products.findIndex(p => p.id === product.id);
+            const productsCopy = [...products];
+            productsCopy[index] = updatedProduct;
+
+            setProducts(productsCopy);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const onDeleteHandler = (id) => {
+        setSelectedProductId(id);
+        setShowDeleteModal(true);
+    }
+
+    const onHideDeleteModal = () => {
+        setShowDeleteModal(false);
+    }
+
+    const onDeleteModalSubmitHandler = async () => {
+        try {
+            setLoading(true);
+            await axios.delete(`https://api.escuelajs.co/api/v1/products/${selectedProductId}`);
+            onHideDeleteModal();
+            const index = products.findIndex(p => p.id === selectedProductId);
+            const productsCopy = [...products];
+            productsCopy.splice(index, 1)
+            setProducts(productsCopy);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <>
             <PageTitle title='Products' />
@@ -189,7 +259,7 @@ const Products = () => {
                                 {ProductsError && (<p>{ProductsError}</p>)}
                                 <div>
                                     {products?.map((product) => {
-                                        return <ProductItem key={product?.id} product={product} />
+                                        return <ProductItem key={product?.id} product={product} onEdit={onEditHandler} onDelete={onDeleteHandler} />
                                     })}
                                 </div>
                             </>
@@ -198,6 +268,8 @@ const Products = () => {
             </section>
 
             <Filter title="Filters" filter={filter} categories={categories} show={showFilter} onHide={onHideFilter} onSubmit={onSubmitFilter} />
+            {(action === ACTIONS.EDIT) && <AddEdit title="Edit" productId={selectedProductId} categories={categories} show={showAddEdit} onHide={onHideAddEdit} addEditSubmit={onAddEditSubmitHandler} />}
+            <DeleteModal show={showDeleteModal} productId={selectedProductId} onHide={onHideDeleteModal} onDelete={onDeleteModalSubmitHandler} />
         </>
     )
 }

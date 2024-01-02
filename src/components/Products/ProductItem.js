@@ -1,9 +1,17 @@
 import React from 'react'
 import classes from './ProductItem.module.css';
-import { faker } from '@faker-js/faker';
+import Dropdown from 'react-bootstrap/Dropdown';
 const ProductItem = (props) => {
 
     const { product } = props;
+
+    const onEditClick = (id) => {
+        props.onEdit(id)
+    }
+
+    const onDeleteClick = (id) => {
+        props.onDelete(id)
+    }
 
     return (
         <>
@@ -21,7 +29,7 @@ const ProductItem = (props) => {
                         }
                     </div>
                 </div>
-                <div className='col-md-6'>
+                <div className='col-md-5'>
                     <p className='fw-bold'>{product?.title}</p>
                     <p className='text-secondary'>{product?.description}</p>
                 </div>
@@ -30,6 +38,17 @@ const ProductItem = (props) => {
                 </div>
                 <div className='col-md-2 text-center'>
                     <span className='fw-bold'>$ {product?.price}</span>
+                </div>
+                <div className='col-md-1 text-center'>
+                    <Dropdown>
+                        <Dropdown.Toggle variant="primary" size="sm" id="dropdown-basic">
+                            Actions
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => onEditClick(product?.id)}>Edit</Dropdown.Item>
+                            <Dropdown.Item onClick={() => onDeleteClick(product?.id)}>Delete</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </div>
             </div>
         </>
