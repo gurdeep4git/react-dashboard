@@ -1,0 +1,11 @@
+.spinner-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.spinner-size {
+    width: 8rem;
+    height: 8rem;
+}
