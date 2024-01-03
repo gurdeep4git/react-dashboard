@@ -2,13 +2,22 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Spinner from '../../Spinner/Spinner';
+import { ACTIONS } from '../../../constants/url';
 
 const AddEdit = (props) => {
 
-    const { productId } = props;
+    const { productId, action } = props;
+
+    const initialProduct = {
+        "title": "",
+        "price": 0,
+        "description": "",
+        "categoryId": 0,
+        "images": ["https://placeimg.com/640/480/any"]
+    }
 
     const [isLoading, setIsLoading] = useState(false);
-    const [product, setProduct] = useState(null);
+    const [product, setProduct] = useState(initialProduct);
 
     const getProductById = async () => {
         try {
@@ -24,15 +33,27 @@ const AddEdit = (props) => {
     }
 
     useEffect(() => {
-        getProductById()
+        if (!!productId) {
+            getProductById()
+        }
     }, [productId])
 
     const onSubmitClick = () => {
-        const updatedProduct = {
-            ...product,
-            category: props.categories.find(i => i.id === Number(product.category))
+        if (action === ACTIONS.EDIT) {
+            const updatedProduct = {
+                ...product,
+                category: props.categories.find(i => i.id === Number(product.category))
+            }
+            props.addEditSubmit(updatedProduct);
+        } else if (action === ACTIONS.ADD) {
+            const updatedProduct = {
+                ...product,
+                categoryId: Number(product.category),
+                price: Number(product.price)
+            }
+            delete updatedProduct.category;
+            props.addEditSubmit(updatedProduct);
         }
-        props.addEditSubmit(updatedProduct)
     }
 
     const onCancelClick = () => {
@@ -48,11 +69,13 @@ const AddEdit = (props) => {
         })
     }
 
+    const canvasTitle = action === ACTIONS.ADD ? 'Add' : 'Edit';
+
     return (
         <>
             <Offcanvas placement='end' show={props.show} onHide={props.onHide}>
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>{props.title}</Offcanvas.Title>
+                    <Offcanvas.Title>{canvasTitle} Product</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     {

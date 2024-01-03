@@ -8,8 +8,12 @@ import Filter from './Filter/Filter';
 import AddEdit from './AddEdit/AddEdit';
 import { ACTIONS } from '../../constants/url';
 import DeleteModal from './DeleteModal/DeleteModal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Products = () => {
+
+    const DEFAULT_PRODUCT_ID = 0
 
     const { response: productsData, loading: productsLoading, error: ProductsError } = useAxios({
         method: `GET`,
@@ -30,7 +34,8 @@ const Products = () => {
     const [showAddEdit, setShowAddEdit] = useState(false);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [selectedProductId, setSelectedProductId] = useState();
-    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [toastr, setToastr] = useState({ show: false, variant: 'info', message: '' });
 
     const initialFilter = {
         title: '',
@@ -152,6 +157,12 @@ const Products = () => {
         return axios.get(`https://api.escuelajs.co/api/v1/products`);
     }
 
+    const onAddProduct = () => {
+        setSelectedProductId(DEFAULT_PRODUCT_ID);
+        setAction(ACTIONS.ADD);
+        setShowAddEdit(true);
+    }
+
     const onEditHandler = (id) => {
         setSelectedProductId(id);
         setAction(ACTIONS.EDIT);
@@ -168,19 +179,33 @@ const Products = () => {
         return axios.put(url, product)
     }
 
+    const addProduct = (newProduct) => {
+        const url = `https://api.escuelajs.co/api/v1/products`;
+        return axios.post(url, newProduct)
+    }
+
     const onAddEditSubmitHandler = async (product) => {
         try {
             setLoading(true);
-            const response = await updateProduct(product);
-            const updatedProduct = response?.data;
-
+            if (action === ACTIONS.EDIT) {
+                const response = await updateProduct(product);
+                const updatedProduct = response?.data;
+                const index = products.findIndex(p => p.id === product.id);
+                const productsCopy = [...products];
+                productsCopy[index] = updatedProduct;
+                setProducts(productsCopy);
+                toast.success("Product successfully updated !", {
+                    position: toast.POSITION.TOP_CENTER
+                });
+            } else if (action === ACTIONS.ADD) {
+                const response = await addProduct(product);
+                const productsCopy = [...products, response?.data];
+                setProducts(productsCopy);
+                toast.success("Product successfully added !", {
+                    position: toast.POSITION.TOP_CENTER
+                });
+            }
             onHideAddEdit()
-
-            const index = products.findIndex(p => p.id === product.id);
-            const productsCopy = [...products];
-            productsCopy[index] = updatedProduct;
-
-            setProducts(productsCopy);
         } catch (error) {
             console.error(error);
         } finally {
@@ -206,6 +231,9 @@ const Products = () => {
             const productsCopy = [...products];
             productsCopy.splice(index, 1)
             setProducts(productsCopy);
+            toast.success("Product successfully deleted !", {
+                position: toast.POSITION.TOP_CENTER
+            });
         } catch (error) {
             console.error(error);
         } finally {
@@ -219,6 +247,9 @@ const Products = () => {
 
             <section className='mb-4'>
                 <div className="d-flex justify-content-end row">
+                    <div className='col'>
+                        <button onClick={onAddProduct} type='button' className='btn btn-primary'>Add Product</button>
+                    </div>
                     <div className="col-md-3">
                         <input onChange={handleSearch} type="text" className="form-control" id="search" placeholder="Search by title" />
                     </div>
@@ -268,8 +299,10 @@ const Products = () => {
             </section>
 
             <Filter title="Filters" filter={filter} categories={categories} show={showFilter} onHide={onHideFilter} onSubmit={onSubmitFilter} />
-            {(action === ACTIONS.EDIT) && <AddEdit title="Edit" productId={selectedProductId} categories={categories} show={showAddEdit} onHide={onHideAddEdit} addEditSubmit={onAddEditSubmitHandler} />}
+            {(action === ACTIONS.EDIT || action === ACTIONS.ADD) && <AddEdit action={action} productId={selectedProductId} categories={categories} show={showAddEdit} onHide={onHideAddEdit} addEditSubmit={onAddEditSubmitHandler} />}
             <DeleteModal show={showDeleteModal} productId={selectedProductId} onHide={onHideDeleteModal} onDelete={onDeleteModalSubmitHandler} />
+
+            <ToastContainer />
         </>
     )
 }
