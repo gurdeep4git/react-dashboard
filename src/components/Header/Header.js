@@ -4,11 +4,16 @@ import classes from './Header.module.css';
 import useToken from '../../hooks/useToken';
 import { useNavigate } from "react-router-dom";
 import { URL } from '../../constants/url';
+import { Button } from 'react-bootstrap';
+import Badge from 'react-bootstrap/Badge';
+import { CartState } from '../../context/CartContext';
 
 const Header = () => {
     const navigate = useNavigate();
     const { token, clearToken } = useToken();
     const [user, setUser] = useState();
+
+    const { state: { cart } } = CartState();
 
     useEffect(() => {
         async function getUserDetails(token) {
@@ -51,6 +56,11 @@ const Header = () => {
             <div>
                 <span onClick={onLogout}>logout</span>
             </div>
+            <div className='mx-4 text-secondary'> | </div>
+            <Button variant="primary">
+                Cart <Badge bg="secondary">{cart.length}</Badge>
+                <span className="visually-hidden">cart items</span>
+            </Button>
         </div>
     )
 }

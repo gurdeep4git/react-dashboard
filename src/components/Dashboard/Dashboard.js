@@ -4,6 +4,8 @@ import Header from '../Header/Header';
 import Login from '../Login/Login';
 import { Outlet } from "react-router-dom";
 import Menu from '../Menu/Menu';
+import CartContext from '../../context/CartContext';
+
 
 const Dashboard = () => {
     const { token, setToken } = useToken();
@@ -26,12 +28,14 @@ const Dashboard = () => {
                     <Menu />
                 </div>
                 <div className="col-md-10">
-                    <header>
-                        <Header token={token} />
-                    </header>
-                    <main style={mainStyle}>
-                        <Outlet />
-                    </main>
+                    <CartContext>
+                        <header>
+                            <Header token={token} />
+                        </header>
+                        <main style={mainStyle}>
+                            <Outlet />
+                        </main>
+                    </CartContext>
                 </div>
             </div>
         </div>

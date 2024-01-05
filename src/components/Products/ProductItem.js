@@ -30,7 +30,7 @@ const ProductItem = (props) => {
                     </div>
                 </div>
                 <div className='col-md-5'>
-                    <p className='fw-bold'>{product?.title}</p>
+                    <p className='fw-bold' onClick={() => props.navigateToDetails(product?.id)}>{product?.title}</p>
                     <p className='text-secondary'>{product?.description}</p>
                 </div>
                 <div className='col-md-2 text-center'>

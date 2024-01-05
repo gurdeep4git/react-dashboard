@@ -10,10 +10,12 @@ import { ACTIONS } from '../../constants/url';
 import DeleteModal from './DeleteModal/DeleteModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const Products = () => {
 
-    const DEFAULT_PRODUCT_ID = 0
+    const DEFAULT_PRODUCT_ID = 0;
+    const navigate = useNavigate();
 
     const { response: productsData, loading: productsLoading, error: ProductsError } = useAxios({
         method: `GET`,
@@ -35,7 +37,6 @@ const Products = () => {
     const [action, setAction] = useState(ACTIONS.NONE);
     const [selectedProductId, setSelectedProductId] = useState();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [toastr, setToastr] = useState({ show: false, variant: 'info', message: '' });
 
     const initialFilter = {
         title: '',
@@ -241,6 +242,10 @@ const Products = () => {
         }
     }
 
+    const navigateToDetailsHandler = (id) => {
+        navigate(`./${id}`)
+    }
+
     return (
         <>
             <PageTitle title='Products' />
@@ -290,7 +295,7 @@ const Products = () => {
                                 {ProductsError && (<p>{ProductsError}</p>)}
                                 <div>
                                     {products?.map((product) => {
-                                        return <ProductItem key={product?.id} product={product} onEdit={onEditHandler} onDelete={onDeleteHandler} />
+                                        return <ProductItem navigateToDetails={navigateToDetailsHandler} key={product?.id} product={product} onEdit={onEditHandler} onDelete={onDeleteHandler} />
                                     })}
                                 </div>
                             </>

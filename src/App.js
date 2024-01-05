@@ -5,6 +5,7 @@ import useToken from "./hooks/useToken";
 import Products from './components/Products/Products';
 import Profile from "./components/Profile/Profile";
 import { URL } from "./constants/url";
+import ProductDetail from "./components/Products/ProductDetail/ProductDetail";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
         <Route path={URL.DASHBOARD} element={<Dashboard />}>
           <Route path="." element={<Products />} />
           <Route path="products" element={<Products />} />
+          <Route path="products/:id" element={<ProductDetail />} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
