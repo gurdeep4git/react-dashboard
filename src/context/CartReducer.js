@@ -11,7 +11,7 @@ export const cartReducer = (state, action) => {
                 }
 
                 const updatedCart = [...state.cart];
-                productsCopy[index] = updatedProduct;
+                updatedCart[index] = updatedProduct;
 
                 return {
                     ...state,
