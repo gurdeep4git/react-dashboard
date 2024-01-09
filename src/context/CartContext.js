@@ -6,7 +6,7 @@ const Cart = createContext();
 const CartContext = (props) => {
 
     const [state, dispatch] = useReducer(cartReducer, {
-        cart: [1]
+        cart: []
     })
 
     return (

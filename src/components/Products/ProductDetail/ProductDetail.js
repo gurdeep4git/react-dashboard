@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -7,6 +7,8 @@ import Spinner from '../../Spinner/Spinner';
 import axios from 'axios';
 import { Button } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons';
+import { CartState } from '../../../context/CartContext';
+import { ADD_TO_CART } from '../../../constants/url';
 
 
 const ProductDetail = () => {
@@ -14,6 +16,8 @@ const ProductDetail = () => {
     const { id } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [product, setProduct] = useState(null);
+    const { dispatch } = CartState();
+    const quantityRef = useRef()
 
     const getProductById = async (id) => {
         try {
@@ -34,6 +38,14 @@ const ProductDetail = () => {
     }, [id])
 
     const OPTIONS = [1, 2, 3, 4, 5];
+
+    const addToCart = () => {
+        const addedProduct = {
+            ...product,
+            quantity: Number(quantityRef.current.value)
+        }
+        dispatch({ type: ADD_TO_CART, payload: addedProduct })
+    }
 
     return (
         <>
@@ -61,14 +73,14 @@ const ProductDetail = () => {
 
                             <div className='my-3'>
                                 <span className='text-secondary me-3'>Quantity</span>
-                                <select style={{ 'width': '50px' }}>
+                                <select ref={quantityRef} style={{ 'width': '50px' }}>
                                     {
                                         OPTIONS.map((i) => (<option key={i} value={i}>{i}</option>))
                                     }
                                 </select>
                             </div>
 
-                            <Button variant='primary'>Add to cart</Button>
+                            <Button variant='primary' onClick={addToCart}>Add to cart</Button>
                         </Col>
                     </Row>
                 </Container>
